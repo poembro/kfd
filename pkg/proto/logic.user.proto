@@ -1,0 +1,30 @@
+syntax = "proto3";
+package pb;
+
+message User {
+    int64 user_id = 1; // 用户id
+    string nickname = 2; // 昵称
+    int32 sex = 3; // 性别
+    string avatar_url = 4; // 头像地址
+    string extra = 5; // 附加字段
+    int64 create_time = 6; // 创建时间
+    int64 update_time = 7; // 更新时间
+    string account = 8; 
+}
+
+message GetUserReq {
+    string account = 1; // account
+}
+
+message GetUserResp {
+    User user = 1; // 用户信息
+}
+
+service LogicUser {
+    //  登录
+    rpc AccountByUser (GetUserReq) returns (GetUserResp); 
+}
+
+//protoc-3.3.0-linux-x86_64.zip 
+//go get -u github.com/golang/protobuf/protoc-gen-go //获取protobuf的编译器插件protoc-gen-go
+//protoc -I . --go_out=plugins=grpc:. ./logic.user.proto //-I参数是proto文件之间有互相依赖，需要import其他几个proto文件   plugins表示目前只支持grpc
