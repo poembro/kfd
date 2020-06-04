@@ -30,10 +30,9 @@ func OutJson(w http.ResponseWriter, errorCode int, msg string, data interface{})
     return err
 }
 
-
 /* 
 参数一 templFile := "login.gtpl"
-       type Data struct{ Title string }
+    type Data struct{ Title string }
 参数二 data:= Data{Title:"夕阳西下"}
 */
 func OutHtml(w http.ResponseWriter, templFile string, data interface{}) {

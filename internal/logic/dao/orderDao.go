@@ -15,7 +15,7 @@ type orderDao struct{}
 var (
     ORDER_TABLE string = "kfd_order"
     ORDERGOODS_TABLE string = "kfd_order_goods"
-    OrdersDao = new(orderDao)
+    OrderDao = new(orderDao)
 )
 
 func (d *orderDao) ListCount(opt model.Order) (int) {
@@ -63,7 +63,7 @@ func (d *orderDao) List(opt model.Order, CurrentPage, limit int) ([]model.OrderR
         }
 
         tt , _:= time.Parse("2006-01-02T15:04:05Z07:00", oinfo.CreateTime)
-        oinfo.CreateTime = tt.Format("2006-01-02 15:04:05") 
+        oinfo.CreateTime = tt.Format("2006-01-02 15:04:05")
         tt1 , _:= time.Parse("2006-01-02T15:04:05Z07:00", oinfo.UpdateTime)
         oinfo.UpdateTime = tt1.Format("2006-01-02 15:04:05")
 
@@ -177,9 +177,6 @@ func (d *orderDao) _GetOrderGoods(OrderSn string) ([]model.OrderGoods, error) {
 }
 
 
-
-
-
 func (d *orderDao) _handle(opt model.Order) (sqlstr string){
     var (
         tmp string
@@ -196,7 +193,7 @@ func (d *orderDao) _handle(opt model.Order) (sqlstr string){
         where = append(where, tmp)
     }
 
-    if opt.Status >= 0 {
+    if opt.Status > 0 {
         tmp = fmt.Sprintf("status=%d", opt.Status)
         where = append(where, tmp)
     }
@@ -216,10 +213,15 @@ func (d *orderDao) _handle(opt model.Order) (sqlstr string){
 
 
 // Add 插入一条用户信息
-func (d *orderDao) AddOrderGoods(opt []model.OrderGoods) (int64, error) {
-    result, err := db.DBCli.Exec(
-        "insert ignore into  "+ USER_TABLE +"(app_id,user_id,nickname,sex,avatar_url,extra,account,password) values(?,?,?,?,?,?,?,?),(?,?,?,?,?,?,?,?)",
-        user.AppId, user.UserId, user.Nickname, user.Sex, user.AvatarUrl, user.Extra, user.Account, user.Password)
+func (d *orderDao) AddOrderGoods(opt []model.OrderGoods) (int64, error) { 
+    sqlstr := "insert ignore into  "+ ORDERGOODS_TABLE +"(order_sn,goods_id,goods_name,thumb,goods_num,goods_price) values"
+    for _, val := range opt {
+        tmp := fmt.Sprintf("('%s',%d,'%s','%s',%d,%d),", val.OrderSn, val.GoodsId, val.GoodsName,val.Thumb,val.GoodsNum,val.GoodsPrice)
+        sqlstr += tmp
+    }
+    sqlstr = strings.Trim(sqlstr, ",")
+
+    result, err := db.DBCli.Exec(sqlstr)
 
     if err != nil {
         return 0, gerrors.WrapError(err)
@@ -235,8 +237,9 @@ func (d *orderDao) AddOrderGoods(opt []model.OrderGoods) (int64, error) {
 
 // Add 插入一条用户信息
 func (d *orderDao) AddOrder(opt model.Order) (int64, error) {
-    result, err := db.DBCli.Exec("insert ignore into  "+ USER_TABLE +"(app_id,user_id,nickname,sex,avatar_url,extra,account,password) values(?,?,?,?,?,?,?,?)",
-        user.AppId, user.UserId, user.Nickname, user.Sex, user.AvatarUrl, user.Extra, user.Account, user.Password)
+    result, err := db.DBCli.Exec("insert ignore into " + 
+       ORDER_TABLE + "(order_sn,uid,status,payid,ispay,realname,mobile,address,total_price) values(?,?,?,?,?,?,?,?,?)",
+    opt.OrderSn, opt.Uid, opt.Status, opt.Payid, opt.Ispay, opt.Realname, opt.Mobile, opt.Address, opt.TotalPrice)
     if err != nil {
         return 0, gerrors.WrapError(err)
     }

@@ -1,7 +1,10 @@
 package service
 
 import (
+    "fmt"
+    "time"
     "context"
+    "kfd/pkg/util"
     //"kfd/internal/logic/cache"
     "kfd/internal/logic/dao"
     "kfd/internal/logic/model"
@@ -12,9 +15,9 @@ type orderService struct{}
 var OrderService = new(orderService)
 
 func (*orderService) List(ctx context.Context, opt model.Order, page, limit int) (count int, arr []model.OrderResult, err error) {
-    count = dao.OrdersDao.ListCount(opt)
+    count = dao.OrderDao.ListCount(opt)
     
-    arr, err = dao.OrdersDao.List(opt, page, limit)
+    arr, err = dao.OrderDao.List(opt, page, limit)
     if err != nil {
         return 0, nil, err
     } 
@@ -23,17 +26,7 @@ func (*orderService) List(ctx context.Context, opt model.Order, page, limit int)
 }
 
 func (*orderService) Get(ctx context.Context, opt model.Order) (item *model.OrderResult, err error) { 
-	item, err = dao.OrdersDao.Get(opt)
-	if err != nil {
-		return nil, err
-	}
-    
-	return item, err
-}
- 
-
-func (*orderService) Get(ctx context.Context, opt model.Order) (item *model.OrderResult, err error) { 
-	item, err = dao.OrdersDao.Get(opt)
+	item, err = dao.OrderDao.Get(opt)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +35,7 @@ func (*orderService) Get(ctx context.Context, opt model.Order) (item *model.Orde
 }
 
 
-func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64) (item *model.OrderResult, err error) { 
+func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64) (item *model.Order, err error) { 
     var (
         totalPrice int64
         Order model.Order
@@ -50,16 +43,19 @@ func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64)
         OrderGoodsArr []model.OrderGoods
     )
     //id生成器获取id
-    OrderSn, err := util.OrderBusinessId.Get()
+    OrderId, err := util.BuildOrderSn.Get()
     if err != nil {
-        OutJson(w, 1, "id error", nil)
-        return
+        return nil, err
     }
+
+    //layout := "Year:2006 Month:01 Day:02 Hour:03 Min:04 Second:05" 
+    layout := "20060102"
+    dateline := time.Now().Format(layout)
+    OrderSn := fmt.Sprintf("O_%s%d",dateline, OrderId)
 
     user, err := UserService.Get(ctx, int64(1), uid)
     if err != nil  {
-        OutJson(w, 1, "error user not register", uid)
-        return
+        return nil, err
     }
     
     for _, val := range opt {
@@ -70,11 +66,10 @@ func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64)
         } 
         goodsInfo, err := GoodsService.Get(ctx, model.Goods{Id:goods_id})
         if err != nil  {
-            OutJson(w, 1, "error item not ", param.Id)
-            return
+            return nil, err
         }
         
-        OrderGoods.OrderSn = string(OrderSn)
+        OrderGoods.OrderSn = OrderSn
         OrderGoods.GoodsId = goods_id
         OrderGoods.GoodsNum = goods_num 
         OrderGoods.GoodsName = goodsInfo.Name 
@@ -89,7 +84,7 @@ func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64)
     dao.OrderDao.AddOrderGoods(OrderGoodsArr)
 
 
-    Order.OrderSn = string(OrderSn)
+    Order.OrderSn = OrderSn
     Order.Uid = uid
     Order.Status = 1
     Order.Payid = 1
@@ -101,6 +96,6 @@ func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64)
     //写入
     dao.OrderDao.AddOrder(Order)
 
-	return item, err
+	return &Order, err
 }
 

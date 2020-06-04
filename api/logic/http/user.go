@@ -33,12 +33,12 @@ func UserInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 type Page struct{
-    Sex            int32  `json:"sex"`     // sex
-    Count          int    `json:"count"`   // count
-    TotalPages     int    `json:"totalpages"`   // count
-    PageSize       int    `json:"pagesize"`   // count
-    CurrentPage    int    `json:"currentpage"`   // count
-    Data           []model.User
+    Sex            int32  `json:"sex"`           // sex
+    Count          int    `json:"count"`         // count
+    TotalPages     int    `json:"totalpages"`    // totalpages
+    PageSize       int    `json:"pagesize"`      // pagesize
+    CurrentPage    int    `json:"currentpage"`   // currentpage
+    Data           []model.User `json:"data"`
 }
 
 func UserList(w http.ResponseWriter, r *http.Request) {

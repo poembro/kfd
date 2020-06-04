@@ -1,6 +1,7 @@
 package dao
 
 import (
+    "fmt"
     "database/sql"
     "kfd/internal/logic/db"
     "kfd/internal/logic/model"
@@ -10,7 +11,7 @@ import (
 type userDao struct{}
 
 var (
-    USER_TABLE string = "kfd_order" 
+    USER_TABLE string = "kfd_user" 
     UserDao = new(userDao)
 )
 
@@ -27,10 +28,10 @@ func (*userDao) ListUserCount(sex int32) (int) {
 }
 
 func (*userDao) ListUser(sex int32, CurrentPage, limit int) ([]model.User, error) {
-    rows, err := db.DBCli.Query(`
-        select user_id,nickname,sex,avatar_url,extra,create_time,update_time 
-        from ?
-        where sex = ? ORDER BY id DESC limit ?, ?`,USER_TABLE, sex, (CurrentPage-1) * limit, limit)
+    sqlstr := "select user_id,nickname,sex,avatar_url,extra,create_time,update_time FROM %s WHERE sex = %d ORDER BY id DESC limit %d, %d"
+    sqlstr = fmt.Sprintf(sqlstr, USER_TABLE, sex, (CurrentPage-1) * limit, limit)
+    fmt.Println(sqlstr)
+    rows, err := db.DBCli.Query(sqlstr)
     if err != nil {
         return nil, gerrors.WrapError(err)
     }
@@ -66,12 +67,16 @@ func (*userDao) AccountByUser(account string) (*model.User, error) {
 
 // Add 插入一条用户信息
 func (*userDao) Add(user model.User) (int64, error) {
-    result, err := db.DBCli.Exec("insert ignore into  "+ USER_TABLE +"(app_id,user_id,nickname,sex,avatar_url,extra,account,password) values(?,?,?,?,?,?,?,?)",
-        user.AppId, user.UserId, user.Nickname, user.Sex, user.AvatarUrl, user.Extra, user.Account, user.Password)
+    fmt.Println(user)
+    strsql := fmt.Sprintf("insert ignore into %s(app_id,user_id,nickname,sex,avatar_url,extra,account,password) values(%d,%d,'%s',%d,'%s','%s','%s','%s')", 
+        USER_TABLE,user.AppId, user.UserId, user.Nickname, user.Sex, user.AvatarUrl, user.Extra, user.Account, user.Password)
+    fmt.Println(strsql)
+    
+    result, err := db.DBCli.Exec(strsql)
     if err != nil {
         return 0, gerrors.WrapError(err)
     }
-
+    
     affected, err := result.RowsAffected()
     if err != nil {
         return 0, gerrors.WrapError(err)

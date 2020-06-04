@@ -10,29 +10,34 @@ import (
 )
 
 
-//[{"goods_id":33,"goods_num":2},{"goods_id":33,"goods_num":1},]
+//接收参数格式: [{"goods_id":33,"goods_num":2},{"goods_id":33,"goods_num":1},]
 func OrderSave(w http.ResponseWriter, r *http.Request) {
     var (
         user_id int64
         ok bool
         param []map[string]int64
     )
-      
+    
     user_id, ok = r.Context().Value("user_id").(int64); //作为赋值中的类型字符串:需要类型断言
     if user_id == 0 || !ok {
-        OutJson(w, 1, "token error1 r.Context().Value ", user_id)
+        OutJson(w, 1, "token error r.Context().Value ", user_id)
         return  
     }
     
     body, _ := ioutil.ReadAll(r.Body)
-    json.Unmarshal(body, param)
-    
+    json.Unmarshal(body, &param)
+
     if len(param) == 0 {
         OutJson(w, 1, "error param is null ", param)
         return
     }
     
-    item := service.OrderService.Save(context.TODO(), user_id, param)
+    item, err := service.OrderService.Save(context.TODO(), user_id, param)
+    if err != nil  {
+        OutJson(w, 1, "not data ", item.OrderSn)
+        return
+    }
+    
     OutJson(w, 0, "success", item)
     return
 }
@@ -42,8 +47,7 @@ func OrderInfo(w http.ResponseWriter, r *http.Request) {
     var (
         user_id int64
         ok bool
-        param model.Order
-
+        param model.Order 
         err error
         item *model.OrderResult
     )
@@ -64,7 +68,7 @@ func OrderInfo(w http.ResponseWriter, r *http.Request) {
     param.Uid = user_id
     item, err = service.OrderService.Get(context.TODO(), param)
     if err != nil  {
-        OutJson(w, 1, "error item not ", param.OrderSn)
+        OutJson(w, 1, "not data ", param.OrderSn)
         return
     }
     
@@ -86,7 +90,6 @@ func OrderList(w http.ResponseWriter, r *http.Request) {
     var (
         user_id int64
         ok bool
-
         param OrderPage
         opt model.Order
     )
@@ -114,7 +117,7 @@ func OrderList(w http.ResponseWriter, r *http.Request) {
     opt.Status = param.Status
     count, arr, err := service.OrderService.List(context.TODO(),  opt, param.CurrentPage, param.PageSize)
     if err != nil  {
-        OutJson(w, 1, "error arr ", err)
+        OutJson(w, 1, "not data ", err)
         return
     }
     param.Count = count

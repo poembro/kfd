@@ -16,12 +16,8 @@ import (
 func toRemoteGetOpenid(js_code string) (arr []byte) { 
     var ( 
 		url string
-	)
- 
-    url = fmt.Sprintf(config.WinxinConf.SappJscodeURL,
-         config.WinxinConf.Appid,
-         config.WinxinConf.Secret, 
-         js_code)
+	) 
+    url = fmt.Sprintf(config.WinxinConf.SappJscodeURL, config.WinxinConf.Appid, config.WinxinConf.Secret, js_code)
 	arr = util.HttpGet(url) 
 	return
 }
@@ -167,7 +163,7 @@ func AuthRegister(w http.ResponseWriter, r *http.Request) {
     param.AppId = 1
     param.Nickname = "昵称"
     param.Sex = 1
-    param.AvatarUrl = "/#"
+    param.AvatarUrl = "#"
     param.Extra = "#"
   
     err = service.UserService.Add(context.TODO(), param)

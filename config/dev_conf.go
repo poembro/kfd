@@ -30,8 +30,6 @@ type weixinConf struct {
 	Secret                 string 
 }
 
-
-
 var (
 	LogicConf logicConf
 	WinxinConf weixinConf

@@ -13,8 +13,8 @@ func main() {
     defer util.RecoverPanic() 
 
     // 初始化数据库
-    //db.InitDB()
-
+    db.InitDB() 
+    
     // 初始化自增id配置
     util.InitUID(db.DBCli)
 

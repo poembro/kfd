@@ -1,17 +1,14 @@
 package db
 
-import ( 
-    "kfd/config"
+import (
     "github.com/go-redis/redis"
 )
 
 var RedisCli *redis.Client
 
-func InitDB() {
-    addr := config.LogicConf.RedisIP
-
+func InitRdsDB(cnf string) {
     RedisCli = redis.NewClient(&redis.Options{
-        Addr: addr,
+        Addr: cnf,
         DB:   0,
     })
 

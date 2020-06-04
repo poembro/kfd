@@ -21,7 +21,7 @@ func GoodsInfo(w http.ResponseWriter, r *http.Request) {
     
     item, err := service.GoodsService.Get(context.TODO(), param)
     if err != nil  {
-        OutJson(w, 1, "error item not ", param.Id)
+        OutJson(w, 1, "is not data ", param.Id)
         return
     }
     
@@ -31,13 +31,12 @@ func GoodsInfo(w http.ResponseWriter, r *http.Request) {
 
 type GoodsPage struct{
     CategoryId     int32  `json:"category_id"`   // sex
-    Count          int    `json:"count"`        // count
-    TotalPages     int    `json:"totalpages"`   // count
-    PageSize       int    `json:"pagesize"`     // count
-    CurrentPage    int    `json:"currentpage"`  // count
-    Data           []model.Goods
+    Count          int    `json:"count"`         // count
+    TotalPages     int    `json:"totalpages"`    // totalpages
+    PageSize       int    `json:"pagesize"`      // pagesize
+    CurrentPage    int    `json:"currentpage"`   // currentpage
+    Data           []model.Goods `json:"data"`
 }
-
 
 func GoodsList(w http.ResponseWriter, r *http.Request) {
     var (
@@ -55,9 +54,9 @@ func GoodsList(w http.ResponseWriter, r *http.Request) {
     }
 
     opt.CategoryId = param.CategoryId
-    count, arr, err := service.GoodsService.ListGoods(context.TODO(),  opt, param.CurrentPage, param.PageSize)
+    count, arr, err := service.GoodsService.ListGoods(context.TODO(), opt, param.CurrentPage, param.PageSize)
     if err != nil  {
-        OutJson(w, 1, "error arr ", err)
+        OutJson(w, 1, "is not data ", err)
         return
     }
     param.Count = count

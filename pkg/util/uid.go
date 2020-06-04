@@ -8,7 +8,7 @@ import (
 
 var ( 
     DeviceIdUid      *uid.Uid
-    OrderSn          *uid.Uid //新增
+    BuildOrderSn     *uid.Uid //新增
 )
 
 const (
@@ -24,7 +24,8 @@ func InitUID(db *sql.DB) {
         panic(err)
     }
 
-    OrderSn, err = uid.NewUid(db, OrderBusinessId, 5)
+    // 新增
+    BuildOrderSn, err = uid.NewUid(db, OrderBusinessId, 5)
     if err != nil {
         //logger.Sugar.Error(err)
         panic(err)
