@@ -9,14 +9,18 @@ import (
 
 type userDao struct{}
 
-var UserDao = new(userDao)
+var (
+    USER_TABLE string = "kfd_order" 
+    UserDao = new(userDao)
+)
+
 
 func (*userDao) ListUserCount(sex int32) (int) {
     var (
         count int
     )
 
-    row := db.DBCli.QueryRow("SELECT count(id) as count FROM user where sex = ? limit 1", sex)
+    row := db.DBCli.QueryRow("SELECT count(id) as count FROM " + USER_TABLE + " where sex = ? limit 1", sex)
     row.Scan(&count)
 
     return count
@@ -25,8 +29,8 @@ func (*userDao) ListUserCount(sex int32) (int) {
 func (*userDao) ListUser(sex int32, CurrentPage, limit int) ([]model.User, error) {
     rows, err := db.DBCli.Query(`
         select user_id,nickname,sex,avatar_url,extra,create_time,update_time 
-        from user
-        where sex = ? ORDER BY id DESC limit ?, ?`, sex, (CurrentPage-1) * limit, limit)
+        from ?
+        where sex = ? ORDER BY id DESC limit ?, ?`,USER_TABLE, sex, (CurrentPage-1) * limit, limit)
     if err != nil {
         return nil, gerrors.WrapError(err)
     }
@@ -44,7 +48,7 @@ func (*userDao) ListUser(sex int32, CurrentPage, limit int) ([]model.User, error
 }
 
 func (*userDao) AccountByUser(account string) (*model.User, error) {
-    row := db.DBCli.QueryRow("select user_id,nickname,sex,avatar_url,extra,create_time,update_time,password from user where account = ? limit 1", account)
+    row := db.DBCli.QueryRow("select user_id,nickname,sex,avatar_url,extra,create_time,update_time,password from "+ USER_TABLE +" where account = ? limit 1", account)
     
     user := model.User{ Account: account }
 
@@ -62,7 +66,7 @@ func (*userDao) AccountByUser(account string) (*model.User, error) {
 
 // Add 插入一条用户信息
 func (*userDao) Add(user model.User) (int64, error) {
-    result, err := db.DBCli.Exec("insert ignore into user(app_id,user_id,nickname,sex,avatar_url,extra,account,password) values(?,?,?,?,?,?,?,?)",
+    result, err := db.DBCli.Exec("insert ignore into  "+ USER_TABLE +"(app_id,user_id,nickname,sex,avatar_url,extra,account,password) values(?,?,?,?,?,?,?,?)",
         user.AppId, user.UserId, user.Nickname, user.Sex, user.AvatarUrl, user.Extra, user.Account, user.Password)
     if err != nil {
         return 0, gerrors.WrapError(err)
@@ -77,7 +81,7 @@ func (*userDao) Add(user model.User) (int64, error) {
 
 // Get 获取用户信息
 func (*userDao) Get(appId, userId int64) (*model.User, error) {
-    row := db.DBCli.QueryRow("select nickname,sex,avatar_url,extra,create_time,update_time from user where app_id = ? and user_id = ?",
+    row := db.DBCli.QueryRow("select nickname,sex,avatar_url,extra,create_time,update_time from  "+ USER_TABLE +" where app_id = ? and user_id = ?",
                appId, userId)
     user := model.User{
         AppId:  appId,
@@ -98,7 +102,7 @@ func (*userDao) Get(appId, userId int64) (*model.User, error) {
 
 // Update 更新用户信息
 func (*userDao) Update(user model.User) error {
-    _, err := db.DBCli.Exec("update user set nickname = ?,sex = ?,avatar_url = ?,extra = ? where app_id = and user_id = ?",
+    _, err := db.DBCli.Exec("update  "+ USER_TABLE +" set nickname = ?,sex = ?,avatar_url = ?,extra = ? where app_id = and user_id = ?",
         user.Nickname, user.Sex, user.AvatarUrl, user.Extra, user.AppId, user.UserId)
     if err != nil {
         return gerrors.WrapError(err)

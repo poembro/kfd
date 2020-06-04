@@ -8,7 +8,7 @@ import (
     "math"
 )
 
- 
+
 func TotalPage(nums, prepage int) int {
     return int(math.Ceil(float64(nums) / float64(prepage)))
 }

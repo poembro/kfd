@@ -32,7 +32,6 @@ func UserInfo(w http.ResponseWriter, r *http.Request) {
     return
 }
 
-
 type Page struct{
     Sex            int32  `json:"sex"`     // sex
     Count          int    `json:"count"`   // count

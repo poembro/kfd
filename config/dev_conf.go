@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"net/url"
 )
 
 func init() {
@@ -29,7 +30,7 @@ type weixinConf struct {
 	Secret                 string 
 }
 
-13971688491
+
 
 var (
 	LogicConf logicConf
@@ -37,13 +38,14 @@ var (
 )
 
 func initLocalConf() {
+	loc := url.QueryEscape("Asia/Shanghai")
 	LogicConf = logicConf{
-		MySQL: "root:123456@tcp(192.168.3.111:3306)/handan?charset=utf8&parseTime=true",
+		MySQL: "root:admin@2019@tcp(sh-cdb-dw5p0dpo.sql.tencentcdb.com:61740)/db_scmj?charset=utf8&loc="+loc+"&parseTime=true",
 		RedisIP: "127.0.0.1:6379",
 		ApiHTTP: "0.0.0.0:8080", 
 		ApiRPC: "0.0.0.0:50000", 
 		ConnRPCAddrs: "addrs:///127.0.0.1:50000,127.0.0.1:50001",
-	} 
+	}
 
 	WinxinConf = weixinConf{
 		SappJscodeURL: "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",

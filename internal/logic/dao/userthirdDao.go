@@ -9,11 +9,15 @@ import (
 
 type userthirdDao struct{}
 
-var UserthirdDao = new(userthirdDao) 
+
+var (
+    USERTHIRD_TABLE string = "kfd_user_third" 
+    UserthirdDao = new(userthirdDao)
+)
 
 // Add 插入一条
 func (*userthirdDao) Add(item model.Userthird) (int64, error) {
-    result, err := db.DBCli.Exec("insert ignore into user_third(user_id,typeid,openid) values(?,?,?)", item.UserId, item.Typeid, item.Openid)
+    result, err := db.DBCli.Exec("insert ignore into "+USERTHIRD_TABLE+"(user_id,typeid,openid) values(?,?,?)", item.UserId, item.Typeid, item.Openid)
     if err != nil {
         return 0, gerrors.WrapError(err)
     }
@@ -27,7 +31,7 @@ func (*userthirdDao) Add(item model.Userthird) (int64, error) {
 
 // Get 获取
 func (*userthirdDao) Get(Typeid int32, Openid string) (*model.Userthird, error) {
-    row := db.DBCli.QueryRow("select user_id,typeid,openid from user_third where typeid = ? and openid = ?", Typeid, Openid)
+    row := db.DBCli.QueryRow("select user_id,typeid,openid from "+USERTHIRD_TABLE+" where typeid = ? and openid = ?", Typeid, Openid)
     item := model.Userthird{
         Typeid: Typeid,
         Openid: Openid,

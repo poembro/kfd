@@ -94,13 +94,13 @@ func (u *Uid) getFromDB() error {
     }
     defer tx.Rollback()
     //https://www.cnblogs.com/banma/p/11797560.html
-    row := tx.QueryRow("SELECT max_id,step FROM uid WHERE business_id = ? FOR UPDATE", u.businessId)
+    row := tx.QueryRow("SELECT max_id,step FROM kfd_uid WHERE business_id = ? FOR UPDATE", u.businessId)
     err = row.Scan(&maxId, &step)
     if err != nil {
         return err
     }
 
-    _, err = tx.Exec("UPDATE uid SET max_id = ? WHERE business_id = ?", maxId+step, u.businessId)
+    _, err = tx.Exec("UPDATE kfd_uid SET max_id = ? WHERE business_id = ?", maxId+step, u.businessId)
     if err != nil {
         return err
     }

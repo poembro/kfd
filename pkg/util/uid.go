@@ -8,15 +8,23 @@ import (
 
 var ( 
     DeviceIdUid      *uid.Uid
+    OrderSn          *uid.Uid //新增
 )
 
 const (
     DeviceIdBusinessId = "device_id" // 设备id
+    OrderBusinessId = "order_sn" // 新增
 )
 
 func InitUID(db *sql.DB) {
     var err error
     DeviceIdUid, err = uid.NewUid(db, DeviceIdBusinessId, 5)
+    if err != nil {
+        //logger.Sugar.Error(err)
+        panic(err)
+    }
+
+    OrderSn, err = uid.NewUid(db, OrderBusinessId, 5)
     if err != nil {
         //logger.Sugar.Error(err)
         panic(err)

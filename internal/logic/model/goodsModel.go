@@ -6,7 +6,7 @@ import (
 
 // goods
 type Goods struct {
-    Id           int64     `json:"-"`            // 用户id
+    Id           int64     `json:"id"`            // 用户id
     Name         string    `json:"name"`         // 商品名称
     Description  string    `json:"description"`   // 描述
     CategoryId   int32     `json:"category_id"`   // 分类id
