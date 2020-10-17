@@ -3,17 +3,16 @@ package main
 import ( 
     "log"
     "net/http" 
-    //"reflect" 
     "kfd/internal/logic/db"
     "kfd/pkg/util"
-    c "kfd/api/logic/http"
+    c "kfd/internal/logic/http"
 )
 
 func main() {
     defer util.RecoverPanic() 
 
     // 初始化数据库
-    db.InitDB() 
+    db.InitDB()
     
     // 初始化自增id配置
     util.InitUID(db.DBCli)

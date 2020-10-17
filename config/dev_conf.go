@@ -36,9 +36,12 @@ var (
 )
 
 func initLocalConf() {
-	loc := url.QueryEscape("Asia/Shanghai")
+    var (
+		loc string
+	)
+	loc = url.QueryEscape("Asia/Shanghai") //转义不能用明文正确发送的任何字符 如:空格将被转换成字符 %20
 	LogicConf = logicConf{
-		MySQL: "root:admin@2019@tcp(sh-cdb-dw5p0dpo.sql.tencentcdb.com:61740)/db_scmj?charset=utf8&loc="+loc+"&parseTime=true",
+		MySQL: "root:35151@2019@tcp(sh-cdb-dw5p0dpo.sql.tencentcdb.com:61740)/db_scmj?charset=utf8&loc="+loc+"&parseTime=true",
 		RedisIP: "127.0.0.1:6379",
 		ApiHTTP: "0.0.0.0:8080", 
 		ApiRPC: "0.0.0.0:50000", 
@@ -47,10 +50,11 @@ func initLocalConf() {
 
 	WinxinConf = weixinConf{
 		SappJscodeURL: "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
-		Appid: "wx26d393bcc04ccccfb",
-        Secret: "fa7c9a2044a768d28c0caa3a7d0a70813a",
+		Appid: "wx26d393bcc042151fb",
+        Secret: "fa7c9a2044a768d28c0c301325100a70813a",
 	}
 }
+
 
 func initProdConf() {
 	LogicConf = logicConf{

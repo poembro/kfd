@@ -31,7 +31,8 @@ type AuthLoginBody struct {
 type Wxinfo struct {
 	Session_key string `json:"session_key"`
     Openid      string `json:"openid"`
-} 
+}
+
 //微信登录接口
 func AuthWxLogin(w http.ResponseWriter, r *http.Request) {
     var param AuthLoginBody

@@ -51,7 +51,7 @@ func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64)
     //layout := "Year:2006 Month:01 Day:02 Hour:03 Min:04 Second:05" 
     layout := "20060102"
     dateline := time.Now().Format(layout)
-    OrderSn := fmt.Sprintf("O_%s%d",dateline, OrderId)
+    OrderSn := fmt.Sprintf("O_%s%d",dateline, OrderId) //strconv.Itoa(i)
 
     user, err := UserService.Get(ctx, int64(1), uid)
     if err != nil  {
@@ -63,7 +63,7 @@ func (*orderService) Save(ctx context.Context, uid int64,opt []map[string]int64)
         goods_num, numok := val["goods_num"]
         if !idok || !numok {
             continue
-        } 
+        }
         goodsInfo, err := GoodsService.Get(ctx, model.Goods{Id:goods_id})
         if err != nil  {
             return nil, err

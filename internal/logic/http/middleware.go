@@ -14,6 +14,7 @@ func Middleware(next http.Handler) http.Handler {
         )
 
         token = r.Header.Get("token")
+        
         user, _ := service.AuthService.VerifyToken(context.TODO(), token)
         log.Println("打印 秘钥进行校验 参数：",user)
         if user == nil || user.UserId == 0 {

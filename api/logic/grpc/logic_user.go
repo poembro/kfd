@@ -11,6 +11,7 @@ type LogicUserServer struct{}
 
 // 登录
 func (*LogicUserServer) AccountByUser(ctx context.Context, req *pb.GetUserReq) (*pb.GetUserResp, error) {
+	
 	user, _ := service.UserService.AccountByUser(ctx, req.Account)
 
 	if user == nil {
