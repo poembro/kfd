@@ -1,21 +1,20 @@
-golang web 入门
+golang 商城 RESTful API接口服务
 ==============
-一个快速实战 golang restful api 类型的项目
-
+一个快速入门 golang RESTful API 类型的商城项目 (精简版)
 ---------------------------------------
 
 ## 介绍
-- 完全基于 golang 原始 net/http 实现接口 
+- 适用于刚入门golang的新手朋友，简单商城项目可以拿去直接用
+
+
+## 功能点
+- 完全基于 golang 官方的 net/http 实现接口 
 - 对MySQL，redis 的增删改查
-- 基于[gim](https://github.com/alberliu/gim)编写, 感谢[gim](https://github.com/alberliu/gim)作者开源这么美的代码
-
-
-## 已经实现 API
-- 中间件 (用context保存当次请求数据，以便后续handler使用)
-- 验证授权 (openssl RSA 加解密)
-- 列表条件查询
-- 详情页查询
-- 层次分明 控制器controller层 数据dao层 缓存cache层 服务service层
+- net/http中间件 (用context保存当次请求数据，以便后续handler使用)
+- token 验证授权 (openssl RSA 加解密)
+- 列表接口,实现条件查询
+- 详情页接口查询
+- 精简的代码布局 控制器controller层 数据dao层 缓存cache层 服务service层
 - 唯一id生成器，采用mysql表字段 控制
 
 
@@ -38,3 +37,5 @@ go build
 ```
 
 
+##  感谢
+- 代码参考了[gim](https://github.com/alberliu/gim), 感谢alberliu开源这么美的代码
