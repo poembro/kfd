@@ -31,6 +31,10 @@ export GOPATH=/data/web/golang
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 go env -w GOPROXY=https://goproxy.cn,direct
+
+git clone git@github.com:poembro/kfd.git
+cd kfd
+go build
 ```
 
 
